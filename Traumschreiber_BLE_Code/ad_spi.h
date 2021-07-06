@@ -110,9 +110,11 @@ static const uint8_t spi_ad_battery = 1; //AD number of the AD the battery volta
 #define ADREG_GENERAL_USER_CONFIG_1_BYTE_OR 0x10 //Byte for OR operation with GUC1-Register to set Bit#4
 #define ADREG_GENERAL_USER_CONFIG_2_BYTE_OR 0x20 //Byte for OR operation with GUC2-Register to set Bit#5
 
-#define ADREG_DECIMATION_RATE_N     {0x60, 0x00, 0x61, 0x80} //write signal for register with standart settings
-#define ADREG_DECIMATION_RATE_N_500 {0x60, 0x08, 0x61, 0x00} //write signal for register, ODR = 250Hz (should, but actually seems to be 500Hz)
-#define ADREG_DECIMATION_RATE_N_250 {0x60, 0x0F, 0x61, 0xFF} //write signal for register, ODR = 250Hz (should not work, but seems to do 250Hz)
+#define ADREG_DECIMATION_RATE_N          {0x60, 0x00, 0x61, 0x80} //write signal for register with standart settings
+#define ADREG_DECIMATION_RATE_N_8MHz_500 {0x60, 0x08, 0x61, 0x00} //write signal for register, ODR = 500Hz @ 8 Mhz
+#define ADREG_DECIMATION_RATE_N_8MHz_250 {0x60, 0x0F, 0x61, 0xFF} //write signal for register, ODR = 250Hz @ 8 Mhz
+#define ADREG_DECIMATION_RATE_N_4MHz_500 {0x60, 0x04, 0x61, 0x00} //write signal for register, ODR = 500Hz @ 4 Mhz
+#define ADREG_DECIMATION_RATE_N_4MHz_250 {0x60, 0x08, 0x61, 0x00} //write signal for register, ODR = 250Hz @ 4 Mhz
 
 #define ADREG_SRC_MODE_UPDATE_CLEAR {0x64, 0x00} //write signal for register with standart settings
 #define ADREG_SRC_MODE_UPDATE_SET   {0x64, 0x01} //write signal for register with update instruction
@@ -178,7 +180,7 @@ static uint8_t  spi_code_send_buf[CODE_CHAR_VALUE_LENGTH] = {0x44};    /**< TX b
 
 //BLE send ring buffer 10
 #define SPI_BLE_BUFFER_WTRITE_LENGTH_10    BLE_TRAUM_BASE_BITS_PER_CHANNEL_10*SPI_CHANNEL_NUMBER_TOTAL/8
-#define SPI_BLE_BUFFER_LENGTH_10      TRAUM_SERVICE_VALUE_LENGTH_10*24
+#define SPI_BLE_BUFFER_LENGTH_10      TRAUM_SERVICE_VALUE_LENGTH_10*48
 static uint8_t  spi_send_buf_10[SPI_BLE_BUFFER_LENGTH_10];    /**< TX buffer. */
 static const uint16_t  stb_buffer_length_10   = SPI_BLE_BUFFER_LENGTH_10; //needed because somehow constants can't be used in calculations...
 static const uint16_t  stb_packet_size_w_10   = SPI_BLE_BUFFER_WTRITE_LENGTH_10; //needed because somehow constants can't be used in calculations...
@@ -290,7 +292,7 @@ static int32_t  spi_data_gen_buf[8] = {spi_data_gen_add,0x10,0x100,0x1000,-spi_d
 
 // timer event handler
 static void spi_timer_timeout_handler(void * p_context);
-static void spi_data_generation_timeout_handler(void * p_context);
+//static void spi_data_generation_timeout_handler(void * p_context);
 
 /**
  * @brief Handler for timer events.

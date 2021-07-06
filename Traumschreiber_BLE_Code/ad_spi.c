@@ -303,7 +303,8 @@ void spi_data_conversion(uint8_t ad_id) {
                
             packetSkipCounter += 1;
             samplesDroppedCounter += 1;
-            nrf_gpio_pin_write(18, 0);
+            //nrf_gpio_pin_write(18, 0);
+            nrf_gpio_pin_toggle(18);
 
         } else {
 
@@ -324,7 +325,7 @@ void spi_data_conversion(uint8_t ad_id) {
 
             //NRF_LOG_INFO("S: %02x%02x%02x%02x = %i", m_rx_buf[0][0], m_rx_buf[0][1], m_rx_buf[0][2], m_rx_buf[0][3], spi_channel_values[0]);
             
-            nrf_gpio_pin_write(18, 1);
+            //nrf_gpio_pin_write(18, 1);
 
         } //end IF here to wait for next round of packets if buffer is full
 
@@ -904,7 +905,11 @@ void filter_init(uint8_t highpass, uint8_t lowpass, uint8_t notch)
             arm_biquad_cascade_df2T_init_f32(&highpass_instance[i], numstages, hp_coeffs, m_highpass_state[i]);
         }
     }
-
+    
+    //NRF_LOG_INFO("notch: " NRF_LOG_FLOAT_MARKER "\r\n", NRF_LOG_FLOAT(iir_coeffs[0]*10));
+    //NRF_LOG_INFO("low: " NRF_LOG_FLOAT_MARKER "\r\n", NRF_LOG_FLOAT(lp_coeffs[0]*1000));
+    //NRF_LOG_INFO("high: " NRF_LOG_FLOAT_MARKER "\r\n", NRF_LOG_FLOAT(hp_coeffs[0]*10));
+    //NRF_LOG_INFO("filters: h:%i, l:%i, n:%i", highpass, lowpass, notch);
     nrf_gpio_pin_write(18, 0);
     nrf_delay_ms(500);
     if (spi_iir_filter_enabled) nrf_gpio_pin_write(18, 1);
@@ -957,7 +962,7 @@ void spi_init(void)
 
 
         //writing in SRC Config to set AD ORD to 250Hz
-        uint8_t tx_buf_src[] = ADREG_DECIMATION_RATE_N_500; //len=4
+        uint8_t tx_buf_src[] = ADREG_DECIMATION_RATE_N_8MHz_500; //len=4
         uint8_t tx_buf_len = 4;
         APP_ERROR_CHECK(nrf_drv_spi_transfer(&spi[i], tx_buf_src, tx_buf_len, m_rx_buf[i], tx_buf_len));
 
